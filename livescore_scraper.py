@@ -81,6 +81,38 @@ def _login(driver: WebDriver):
         json.dump(cookies, file)
 
 
+def get_this_weeks_scores_submitted(driver: WebDriver) -> dict[str, int]:
+    leaderboard_items_xpath = "//div[contains(@data-testid, 'leaderboard-item')]"
+    leaderboard_items = WebDriverWait(driver, 10).until(
+        EC.presence_of_all_elements_located((By.XPATH, leaderboard_items_xpath))
+    )
+    scores_submitted: dict[str, int] = {}
+    for item in leaderboard_items:
+        item.click()
+
+        scores_xpath = "//p[contains(text(), 'The final score will be')]"
+        scores = WebDriverWait(driver, 10).until(
+            EC.presence_of_all_elements_located((By.XPATH, scores_xpath))
+        )
+        if len(scores) > 1:
+            raise Exception("There should only be one score visible!")
+
+        score = scores[0].text.split()[-1]
+        scores_submitted = update_counter(scores_submitted, score)
+
+        item.click()
+
+    return scores_submitted
+
+
+def update_counter(dictionary: dict[str, int], key: str) -> dict[str, int]:
+    if key in dictionary:
+        dictionary[key] += 1
+    else:
+        dictionary[key] = 1
+    return dictionary
+
+
 def get_leaderboard_scores():
     driver: WebDriver = _set_up_browser()
     try:
@@ -115,6 +147,10 @@ def get_leaderboard_scores():
             EC.presence_of_element_located((By.XPATH, leaderboard_xpath))
         )
         leaderboard_btn.click()
+
+        scores_submitted = get_this_weeks_scores_submitted(driver=driver)
+
+        print(f"The frequency of scores submitted are: {scores_submitted}")
 
         # Switch back to the main page
         driver.switch_to.default_content()
