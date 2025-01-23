@@ -12,6 +12,7 @@ from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
+from tabulate import tabulate
 
 START_URL = "https://www.livescore.com/en/football-games/build-up/"
 
@@ -113,6 +114,10 @@ def update_counter(dictionary: dict[str, int], key: str) -> dict[str, int]:
     return dictionary
 
 
+def display_table_of_statistics(score_data: dict[str, int]):
+    print(tabulate(score_data.items(), headers=["Final score", "Frequency submitted"]))
+
+
 def get_leaderboard_scores():
     driver: WebDriver = _set_up_browser()
     try:
@@ -150,7 +155,7 @@ def get_leaderboard_scores():
 
         scores_submitted = get_this_weeks_scores_submitted(driver=driver)
 
-        print(f"The frequency of scores submitted are: {scores_submitted}")
+        display_table_of_statistics(score_data=scores_submitted)
 
         # Switch back to the main page
         driver.switch_to.default_content()
