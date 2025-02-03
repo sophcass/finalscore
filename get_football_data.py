@@ -1,29 +1,79 @@
 import http.client
 import json
 import os
+from urllib.parse import urlencode
 
-conn = http.client.HTTPSConnection("api-football-v1.p.rapidapi.com")
 
-key = os.getenv("RAPIDAPI_KEY")
+def get_data_from_rapidapi(path: str) -> dict:
+    api_host = "api-football-v1.p.rapidapi.com"
+    key = os.getenv("RAPIDAPI_KEY")
 
-headers = {
-    "x-rapidapi-key": key,
-    "x-rapidapi-host": "api-football-v1.p.rapidapi.com",
-}
+    if not key:
+        raise ValueError("RAPIDAPI_KEY environment variable is not set.")
 
-conn.request("GET", "/v3/leagues?name=Premier+League&code=GB-ENG", headers=headers)
+    headers = {
+        "x-rapidapi-key": key,
+        "x-rapidapi-host": api_host,
+    }
 
-res = conn.getresponse()
-data = res.read()
+    try:
+        conn = http.client.HTTPSConnection("api-football-v1.p.rapidapi.com")
+        conn.request("GET", path, headers=headers)
+        response = conn.getresponse()
+        if response.status != 200:
+            raise ValueError(
+                f"API request failed with status {response.status}: {response.reason}"
+            )
+        return json.loads(response.read().decode("utf-8"))
+    except (http.client.HTTPException, json.JSONDecodeError) as e:
+        raise ValueError(f"Error fetching data from API: {e}")
 
-data = json.loads(data.decode("utf-8"))
 
-leagues = data["response"]
+def get_league_id() -> int:
+    data = get_data_from_rapidapi(path="/v3/leagues?name=Premier+League&code=GB-ENG")
 
-if len(leagues) > 1:
-    raise Exception("More than one league in response")
+    leagues = data.get("response", [])
 
-league = leagues[0]
-league_id = league["league"]["id"]  # 39 - to be used in other API calls
+    if not leagues:
+        raise ValueError("No leagues found in the response.")
 
-print(league_id)
+    if len(leagues) > 1:
+        raise ValueError("More than one league in response")
+
+    league = leagues[0]
+    league_id = league["league"]["id"]  # 39 - to be used in other API calls
+
+    return league_id
+
+
+def get_team_id(team_name: str) -> int:
+    base_url = "https://api-football-v1.p.rapidapi.com/v3/teams"
+
+    query_params = {"name": team_name}
+    path = f"{base_url}?{urlencode(query_params)}"
+    data = get_data_from_rapidapi(path=path)
+
+    teams = data.get("response", [])
+
+    if not teams:
+        raise ValueError("No teams found in the response.")
+
+    if len(teams) > 1:
+        raise ValueError("More than one team in response")
+
+    team = teams[0]
+    team_id = team["team"]["id"]  # 45 - to be used in other API calls
+
+    return team_id
+
+
+def get_team_stats(league_id: int, team_id: int) -> dict:
+    base_url = "https://api-football-v1.p.rapidapi.com/v3/teams/statistics"
+
+    query_params = {"league": league_id, "season": "2024", "team": team_id}
+    path = f"{base_url}?{urlencode(query_params)}"
+    data = get_data_from_rapidapi(path=path)
+
+    stats = data.get("response", [])
+
+    return stats
