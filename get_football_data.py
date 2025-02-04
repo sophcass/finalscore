@@ -77,3 +77,15 @@ def get_team_stats(league_id: int, team_id: int) -> dict:
     stats = data.get("response", [])
 
     return stats
+
+
+def get_match_stats(league_id: int, team_id: int) -> list[dict]:
+    base_url = "https://api-football-v1.p.rapidapi.com/v3/fixtures"
+
+    query_params = {"league": league_id, "season": "2024", "team": team_id}
+    path = f"{base_url}?{urlencode(query_params)}"
+    data = get_data_from_rapidapi(path=path)
+
+    stats = data.get("response", [])
+
+    return stats
