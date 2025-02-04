@@ -1,4 +1,11 @@
-from get_football_data import get_league_id, get_team_id, get_team_stats
+from datetime import datetime
+
+from get_football_data import (
+    get_league_id,
+    get_match_stats,
+    get_team_id,
+    get_team_stats,
+)
 
 
 def get_win_percentage(stats: dict) -> int:
@@ -25,18 +32,66 @@ def get_average_goals_conceded(stats: dict) -> int:
     return avg_goals_conceded
 
 
+def get_recent_form_index(match_stats: list[dict], team_id: int) -> float:
+    today = datetime.now().date()
+    match_results = []
+    weights = [5, 4, 3, 2, 1]
+
+    for fixture in match_stats[::-1]:
+        fixture_timestamp = fixture["fixture"]["timestamp"]
+        fixture_timestamp = datetime.fromtimestamp(fixture_timestamp)
+
+        if fixture_timestamp.date() >= today:
+            continue  # Skip future matches
+
+        home_team_id = fixture["teams"]["home"]["id"]
+        away_team_id = fixture["teams"]["away"]["id"]
+
+        home_goals_scored = fixture["goals"]["home"]
+        away_goals_scored = fixture["goals"]["away"]
+
+        if home_goals_scored is None or away_goals_scored is None:
+            continue  # Match was postponed
+
+        if home_goals_scored == away_goals_scored:
+            match_results.append(1)  # Draw
+        elif home_goals_scored > away_goals_scored:
+            match_results.append(3 if home_team_id == team_id else 0)
+        else:
+            match_results.append(3 if away_team_id == team_id else 0)
+
+        if len(match_results) >= 5:
+            break
+
+    if not match_results:
+        raise Exception("No match data")
+
+    weights = weights[(len(weights) - len(match_results)) :]
+    weighted_sum = sum(
+        recent_goal * weight for recent_goal, weight in zip(match_results, weights)
+    )
+    recent_form_index = weighted_sum / sum(weights)
+
+    return recent_form_index
+
+
 if __name__ == "__main__":
     league_id = get_league_id()
-    team_name = "Bournemouth"
+    team_name = "Tottenham"
     team_id = get_team_id(team_name=team_name)
-    stats = get_team_stats(league_id=league_id, team_id=team_id)
 
-    win_percentage = get_win_percentage(stats=stats)
-    avg_goals_scored = get_average_goals_scored(stats=stats)
-    avg_goals_conceded = get_average_goals_conceded(stats=stats)
+    team_stats = get_team_stats(league_id=league_id, team_id=team_id)
+    match_stats = get_match_stats(league_id=league_id, team_id=team_id)
+
+    win_percentage = get_win_percentage(stats=team_stats)
+    avg_goals_scored = get_average_goals_scored(stats=team_stats)
+    avg_goals_conceded = get_average_goals_conceded(stats=team_stats)
     print(
         f"Team stats for {team_name} are: \n"
         f"Win percentage is: {win_percentage} \n"
         f"Avg goals scored are: {avg_goals_scored} \n"
         f"Average conceded goals are: {avg_goals_conceded} \n"
     )
+
+    recent_form_index = get_recent_form_index(match_stats=match_stats, team_id=team_id)
+    print(f"Recent form index is {recent_form_index}")
