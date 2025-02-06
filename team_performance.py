@@ -76,7 +76,9 @@ def get_recent_form_index(match_stats: list[dict], team_id: int) -> float:
 
 
 if __name__ == "__main__":
-    league_id = get_league_id()
+    # league_name = "Premier League"
+    league_name = "FA Cup"
+    league_id = get_league_id(league_name=league_name)
     team_name = "Tottenham"
     team_id = get_team_id(team_name=team_name)
 

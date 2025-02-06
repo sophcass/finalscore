@@ -29,8 +29,12 @@ def get_data_from_rapidapi(path: str) -> dict:
         raise ValueError(f"Error fetching data from API: {e}")
 
 
-def get_league_id() -> int:
-    data = get_data_from_rapidapi(path="/v3/leagues?name=Premier+League&code=GB-ENG")
+def get_league_id(league_name: str) -> int:
+    base_url = "https://api-football-v1.p.rapidapi.com/v3/leagues"
+
+    query_params = {"name": league_name, "code": "GB-ENG"}
+    path = f"{base_url}?{urlencode(query_params)}"
+    data = get_data_from_rapidapi(path=path)
 
     leagues = data.get("response", [])
 
