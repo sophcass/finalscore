@@ -1,3 +1,4 @@
+import argparse
 from datetime import datetime
 
 from get_football_data import (
@@ -76,10 +77,19 @@ def get_recent_form_index(match_stats: list[dict], team_id: int) -> float:
 
 
 if __name__ == "__main__":
-    # league_name = "Premier League"
-    league_name = "FA Cup"
+    parser = argparse.ArgumentParser(
+        description="Get performance metrics for a football team in a given league"
+    )
+    parser.add_argument(
+        "--league", required=True, help="the league name. E.g. Premier League"
+    )
+    parser.add_argument("--team", required=True, help="the team name. E.g. Everton")
+    args = parser.parse_args()
+
+    league_name = args.league
+    team_name = args.team
+
     league_id = get_league_id(league_name=league_name)
-    team_name = "Tottenham"
     team_id = get_team_id(team_name=team_name)
 
     team_stats = get_team_stats(league_id=league_id, team_id=team_id)
