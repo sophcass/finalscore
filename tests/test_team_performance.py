@@ -3,9 +3,18 @@ import pytest
 from team_performance import (
     get_average_goals_conceded,
     get_average_goals_scored,
+    get_num_fixtures_played,
     get_recent_form_index,
     get_win_percentage,
 )
+
+
+def test_get_num_fixtures_played(team_stats):
+    # Act
+    num_fixtures_played = get_num_fixtures_played(stats=team_stats)
+
+    # Assert
+    assert num_fixtures_played == 23
 
 
 def test_get_win_percentage(team_stats):

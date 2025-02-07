@@ -9,6 +9,10 @@ from get_football_data import (
 )
 
 
+def get_num_fixtures_played(stats: dict) -> int:
+    return stats["fixtures"]["played"]["total"]
+
+
 def get_win_percentage(stats: dict) -> int:
     total_matches_played = stats["fixtures"]["played"]["total"]
     total_wins = stats["fixtures"]["wins"]["total"]
@@ -95,11 +99,13 @@ if __name__ == "__main__":
     team_stats = get_team_stats(league_id=league_id, team_id=team_id)
     match_stats = get_match_stats(league_id=league_id, team_id=team_id)
 
+    num_fixtures_played = get_num_fixtures_played(stats=team_stats)
     win_percentage = get_win_percentage(stats=team_stats)
     avg_goals_scored = get_average_goals_scored(stats=team_stats)
     avg_goals_conceded = get_average_goals_conceded(stats=team_stats)
     print(
         f"Team stats for {team_name} are: \n"
+        f"{num_fixtures_played} fixtures played in the {league_name}\n"
         f"Win percentage is: {win_percentage} \n"
         f"Avg goals scored are: {avg_goals_scored} \n"
         f"Average conceded goals are: {avg_goals_conceded} \n"
