@@ -1,7 +1,20 @@
 import http.client
 import json
 import os
+from typing import Any
 from urllib.parse import urlencode
+
+from diskcache import Cache
+
+cache = Cache("local")
+
+ENGLISH_FOOTBALL_LEAGUES = {
+    "Premier League": 1,
+    "Championship": 2,
+    "League One": 3,
+    "League Two": 4,
+    "National League": 5,
+}
 
 
 def get_data_from_rapidapi(path: str) -> dict:
@@ -29,6 +42,7 @@ def get_data_from_rapidapi(path: str) -> dict:
         raise ValueError(f"Error fetching data from API: {e}")
 
 
+@cache.memoize()
 def get_league_id(league_name: str) -> int:
     base_url = "https://api-football-v1.p.rapidapi.com/v3/leagues"
 
@@ -50,6 +64,7 @@ def get_league_id(league_name: str) -> int:
     return league_id
 
 
+@cache.memoize()
 def get_team_id(team_name: str) -> int:
     base_url = "https://api-football-v1.p.rapidapi.com/v3/teams"
 
@@ -71,6 +86,7 @@ def get_team_id(team_name: str) -> int:
     return team_id
 
 
+@cache.memoize()
 def get_team_stats(league_id: int, team_id: int) -> dict:
     base_url = "https://api-football-v1.p.rapidapi.com/v3/teams/statistics"
 
@@ -83,6 +99,7 @@ def get_team_stats(league_id: int, team_id: int) -> dict:
     return stats
 
 
+@cache.memoize()
 def get_match_stats(league_id: int, team_id: int) -> list[dict]:
     base_url = "https://api-football-v1.p.rapidapi.com/v3/fixtures"
 
