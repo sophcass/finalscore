@@ -1046,3 +1046,153 @@ def match_stats():
             },
         },
     ]
+
+
+@pytest.fixture
+def leagues_data():
+    return {
+        "get": "leagues",
+        "parameters": {"team": "44"},
+        "errors": [],
+        "results": 6,
+        "paging": {"current": 1, "total": 1},
+        "response": [
+            {
+                "league": {
+                    "id": 48,
+                    "name": "League Cup",
+                    "type": "Cup",
+                    "logo": "https://media.api-sports.io/football/leagues/48.png",
+                },
+                "country": {
+                    "name": "England",
+                    "code": "GB-ENG",
+                    "flag": "https://media.api-sports.io/flags/gb-eng.svg",
+                },
+                "seasons": [
+                    {
+                        "year": 2022,
+                        "start": "2022-08-02",
+                        "end": "2023-02-26",
+                        "current": False,
+                        "coverage": {},
+                    },
+                    {
+                        "year": 2023,
+                        "start": "2023-08-08",
+                        "end": "2024-02-25",
+                        "current": False,
+                        "coverage": {},
+                    },
+                    {
+                        "year": 2024,
+                        "start": "2024-08-13",
+                        "end": "2025-02-06",
+                        "current": True,
+                        "coverage": {},
+                    },
+                ],
+            },
+            {
+                "league": {
+                    "id": 40,
+                    "name": "Championship",
+                    "type": "League",
+                    "logo": "https://media.api-sports.io/football/leagues/40.png",
+                },
+                "country": {
+                    "name": "England",
+                    "code": "GB-ENG",
+                    "flag": "https://media.api-sports.io/flags/gb-eng.svg",
+                },
+                "seasons": [
+                    {
+                        "year": 2022,
+                        "start": "2022-07-29",
+                        "end": "2023-05-27",
+                        "current": False,
+                        "coverage": {},
+                    },
+                    {
+                        "year": 2024,
+                        "start": "2024-08-09",
+                        "end": "2025-05-03",
+                        "current": True,
+                        "coverage": {},
+                    },
+                ],
+            },
+            {
+                "league": {
+                    "id": 45,
+                    "name": "FA Cup",
+                    "type": "Cup",
+                    "logo": "https://media.api-sports.io/football/leagues/45.png",
+                },
+                "country": {
+                    "name": "England",
+                    "code": "GB-ENG",
+                    "flag": "https://media.api-sports.io/flags/gb-eng.svg",
+                },
+                "seasons": [
+                    {
+                        "year": 2021,
+                        "start": "2021-08-06",
+                        "end": "2022-05-14",
+                        "current": False,
+                        "coverage": {},
+                    },
+                    {
+                        "year": 2022,
+                        "start": "2022-08-05",
+                        "end": "2023-06-03",
+                        "current": False,
+                        "coverage": {},
+                    },
+                    {
+                        "year": 2023,
+                        "start": "2023-08-04",
+                        "end": "2024-05-25",
+                        "current": False,
+                        "coverage": {},
+                    },
+                    {
+                        "year": 2024,
+                        "start": "2024-08-02",
+                        "end": "2025-02-08",
+                        "current": True,
+                        "coverage": {},
+                    },
+                ],
+            },
+            {
+                "league": {
+                    "id": 39,
+                    "name": "Premier League",
+                    "type": "League",
+                    "logo": "https://media.api-sports.io/football/leagues/39.png",
+                },
+                "country": {
+                    "name": "England",
+                    "code": "GB-ENG",
+                    "flag": "https://media.api-sports.io/flags/gb-eng.svg",
+                },
+                "seasons": [
+                    {
+                        "year": 2021,
+                        "start": "2021-08-13",
+                        "end": "2022-05-22",
+                        "current": False,
+                        "coverage": {},
+                    },
+                    {
+                        "year": 2023,
+                        "start": "2023-08-11",
+                        "end": "2024-05-19",
+                        "current": False,
+                        "coverage": {},
+                    },
+                ],
+            },
+        ],
+    }

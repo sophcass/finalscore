@@ -4,9 +4,13 @@ from datetime import datetime
 from get_football_data import (
     get_league_id,
     get_match_stats,
+    get_team_highest_ranked_league_id,
+    get_team_highest_ranked_league_name,
     get_team_id,
     get_team_stats,
 )
+
+NUM_FIXTURES_THRESHOLD = 5
 
 
 def get_num_fixtures_played(stats: dict) -> int:
@@ -97,15 +101,33 @@ if __name__ == "__main__":
     team_id = get_team_id(team_name=team_name)
 
     team_stats = get_team_stats(league_id=league_id, team_id=team_id)
-    match_stats = get_match_stats(league_id=league_id, team_id=team_id)
 
     num_fixtures_played = get_num_fixtures_played(stats=team_stats)
+    print(
+        f"{num_fixtures_played} fixtures played in the {league_name} by {team_name}\n"
+    )
+    if num_fixtures_played < NUM_FIXTURES_THRESHOLD:
+        team_primary_league_id = get_team_highest_ranked_league_id(team_id=team_id)
+        team_primary_league_name = get_team_highest_ranked_league_name(team_id=team_id)
+        print(
+            f"Looking at stats from {team_primary_league_name} as less than {NUM_FIXTURES_THRESHOLD} fixtures played in the {league_name}\n"
+        )
+
+        team_stats = get_team_stats(league_id=team_primary_league_id, team_id=team_id)
+
+        num_fixtures_played = get_num_fixtures_played(stats=team_stats)
+        print(
+            f"{num_fixtures_played} fixtures played in the {team_primary_league_name} by {team_name}\n"
+        )
+
+        match_stats = get_match_stats(league_id=team_primary_league_id, team_id=team_id)
+    else:
+        match_stats = get_match_stats(league_id=league_id, team_id=team_id)
+
     win_percentage = get_win_percentage(stats=team_stats)
     avg_goals_scored = get_average_goals_scored(stats=team_stats)
     avg_goals_conceded = get_average_goals_conceded(stats=team_stats)
     print(
-        f"Team stats for {team_name} are: \n"
-        f"{num_fixtures_played} fixtures played in the {league_name}\n"
         f"Win percentage is: {win_percentage} \n"
         f"Avg goals scored are: {avg_goals_scored} \n"
         f"Average conceded goals are: {avg_goals_conceded} \n"

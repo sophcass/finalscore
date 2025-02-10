@@ -17,6 +17,7 @@ ENGLISH_FOOTBALL_LEAGUES = {
 }
 
 
+@cache.memoize()
 def get_data_from_rapidapi(path: str) -> dict:
     api_host = "api-football-v1.p.rapidapi.com"
     key = os.getenv("RAPIDAPI_KEY")
@@ -42,7 +43,64 @@ def get_data_from_rapidapi(path: str) -> dict:
         raise ValueError(f"Error fetching data from API: {e}")
 
 
-@cache.memoize()
+def get_highest_ranked_league(team_id: int) -> dict[str, Any]:
+    base_url = "https://api-football-v1.p.rapidapi.com/v3/leagues"
+
+    query_params = {"team": team_id}
+    path = f"{base_url}?{urlencode(query_params)}"
+    data = get_data_from_rapidapi(path=path)
+
+    leagues = data.get("response", [])
+
+    if not leagues:
+        raise ValueError("No leagues found in the response.")
+
+    highest_ranked_league: dict[str, Any] = dict()
+    for league in leagues:
+        seasons = [season["year"] for season in league["seasons"]]
+
+        if 2024 not in seasons:
+            continue
+
+        if not highest_ranked_league:
+            highest_ranked_league = league
+            continue
+
+        highest_ranked_league_ranking = ENGLISH_FOOTBALL_LEAGUES.get(
+            highest_ranked_league["league"]["name"]
+        )
+        league_ranking = ENGLISH_FOOTBALL_LEAGUES.get(league["league"]["name"])
+
+        if not league_ranking:
+            continue
+
+        if (
+            not highest_ranked_league_ranking
+            or league_ranking < highest_ranked_league_ranking
+        ):
+            highest_ranked_league = league
+
+    return highest_ranked_league
+
+
+def get_team_highest_ranked_league_id(team_id: int) -> int:
+    highest_ranked_league = get_highest_ranked_league(team_id=team_id)
+
+    league_id = highest_ranked_league["league"][
+        "id"
+    ]  # 39 - to be used in other API calls
+
+    return league_id
+
+
+def get_team_highest_ranked_league_name(team_id: int) -> str:
+    highest_ranked_league = get_highest_ranked_league(team_id=team_id)
+
+    league_name = highest_ranked_league["league"]["name"]
+
+    return league_name
+
+
 def get_league_id(league_name: str) -> int:
     base_url = "https://api-football-v1.p.rapidapi.com/v3/leagues"
 
@@ -64,7 +122,6 @@ def get_league_id(league_name: str) -> int:
     return league_id
 
 
-@cache.memoize()
 def get_team_id(team_name: str) -> int:
     base_url = "https://api-football-v1.p.rapidapi.com/v3/teams"
 
@@ -86,7 +143,6 @@ def get_team_id(team_name: str) -> int:
     return team_id
 
 
-@cache.memoize()
 def get_team_stats(league_id: int, team_id: int) -> dict:
     base_url = "https://api-football-v1.p.rapidapi.com/v3/teams/statistics"
 
@@ -99,7 +155,6 @@ def get_team_stats(league_id: int, team_id: int) -> dict:
     return stats
 
 
-@cache.memoize()
 def get_match_stats(league_id: int, team_id: int) -> list[dict]:
     base_url = "https://api-football-v1.p.rapidapi.com/v3/fixtures"
 
