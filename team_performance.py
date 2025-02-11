@@ -92,13 +92,17 @@ if __name__ == "__main__":
         "--league", required=True, help="the league name. E.g. Premier League"
     )
     parser.add_argument("--team", required=True, help="the team name. E.g. Everton")
+    parser.add_argument(
+        "--country", required=False, help="the country the team is from. E.g. England"
+    )
     args = parser.parse_args()
 
     league_name = args.league
     team_name = args.team
+    country = args.country
 
     league_id = get_league_id(league_name=league_name)
-    team_id = get_team_id(team_name=team_name)
+    team_id = get_team_id(team_name=team_name, country=country)
 
     team_stats = get_team_stats(league_id=league_id, team_id=team_id)
 

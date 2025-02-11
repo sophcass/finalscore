@@ -1,7 +1,7 @@
 import http.client
 import json
 import os
-from typing import Any
+from typing import Any, Optional
 from urllib.parse import urlencode
 
 from diskcache import Cache
@@ -122,7 +122,7 @@ def get_league_id(league_name: str) -> int:
     return league_id
 
 
-def get_team_id(team_name: str) -> int:
+def get_team_id(team_name: str, country: Optional[str]) -> int:
     base_url = "https://api-football-v1.p.rapidapi.com/v3/teams"
 
     query_params = {"name": team_name}
@@ -131,11 +131,14 @@ def get_team_id(team_name: str) -> int:
 
     teams = data.get("response", [])
 
+    if country:
+        teams = [team for team in teams if team["team"]["country"] == country]
+
     if not teams:
         raise ValueError("No teams found in the response.")
 
     if len(teams) > 1:
-        raise ValueError("More than one team in response")
+        raise ValueError("More than one team in response. Please specify country.")
 
     team = teams[0]
     team_id = team["team"]["id"]  # 45 - to be used in other API calls
