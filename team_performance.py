@@ -84,6 +84,23 @@ def get_recent_form_index(match_stats: list[dict], team_id: int) -> float:
     return recent_form_index
 
 
+def get_valid_team_stats(league_id: int, team_id: int) -> dict:
+    team_stats = get_team_stats(league_id=league_id, team_id=team_id)
+    num_fixtures_played = get_num_fixtures_played(team_stats)
+
+    if num_fixtures_played < NUM_FIXTURES_THRESHOLD:
+        fallback_league_id = get_team_highest_ranked_league_id(team_id)
+        fallback_league_name = get_team_highest_ranked_league_name(team_id)
+
+        print(
+            f"Not enough fixtures in the given league. Using stats from {fallback_league_name} instead."
+        )
+
+        return get_team_stats(league_id=fallback_league_id, team_id=team_id)
+
+    return team_stats
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Get performance metrics for a football team in a given league"
@@ -104,38 +121,22 @@ if __name__ == "__main__":
     league_id = get_league_id(league_name=league_name)
     team_id = get_team_id(team_name=team_name, country=country)
 
-    team_stats = get_team_stats(league_id=league_id, team_id=team_id)
+    team_stats = get_valid_team_stats(league_id=league_id, team_id=team_id)
+    match_stats = get_match_stats(league_id=league_id, team_id=team_id)
 
     num_fixtures_played = get_num_fixtures_played(stats=team_stats)
     print(
         f"{num_fixtures_played} fixtures played in the {league_name} by {team_name}\n"
     )
-    if num_fixtures_played < NUM_FIXTURES_THRESHOLD:
-        team_primary_league_id = get_team_highest_ranked_league_id(team_id=team_id)
-        team_primary_league_name = get_team_highest_ranked_league_name(team_id=team_id)
-        print(
-            f"Looking at stats from {team_primary_league_name} as less than {NUM_FIXTURES_THRESHOLD} fixtures played in the {league_name}\n"
-        )
-
-        team_stats = get_team_stats(league_id=team_primary_league_id, team_id=team_id)
-
-        num_fixtures_played = get_num_fixtures_played(stats=team_stats)
-        print(
-            f"{num_fixtures_played} fixtures played in the {team_primary_league_name} by {team_name}\n"
-        )
-
-        match_stats = get_match_stats(league_id=team_primary_league_id, team_id=team_id)
-    else:
-        match_stats = get_match_stats(league_id=league_id, team_id=team_id)
 
     win_percentage = get_win_percentage(stats=team_stats)
     avg_goals_scored = get_average_goals_scored(stats=team_stats)
     avg_goals_conceded = get_average_goals_conceded(stats=team_stats)
+    recent_form_index = get_recent_form_index(match_stats=match_stats, team_id=team_id)
+
     print(
         f"Win percentage is: {win_percentage} \n"
         f"Avg goals scored are: {avg_goals_scored} \n"
         f"Average conceded goals are: {avg_goals_conceded} \n"
+        f"Recent form index is {recent_form_index}"
     )
-
-    recent_form_index = get_recent_form_index(match_stats=match_stats, team_id=team_id)
-    print(f"Recent form index is {recent_form_index}")
