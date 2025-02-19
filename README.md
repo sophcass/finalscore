@@ -18,4 +18,39 @@ This web scraper automates interactions with the Livescore Build-Up game, helpin
     ```
 5. View the frequency table to identify unpicked scores.
 
-> **Note:** ChromeDriver and environment variables must be properly configured for the scraper to work.  
+> **Note:** ChromeDriver and environment variables must be properly configured for the scraper to work.
+
+## Football Team Performance Metrics
+This script retrieves and calculates various performance metrics for a football team within a given league. The key metrics include:
+* League position
+* Number of fixtures played
+* Win percentage
+* Average goals scored per match
+* Average goals conceded per match
+* Recent form index (based on last 5 matches)
+
+### Usage
+1. Create an API-Football account if you don't have one already.
+2. Set environment variables for your API-Football API key:
+    ```bash
+    export RAPIDAPI_KEY="your_api_key"
+    ```
+3. Run the script with the following command-line arguments:
+    ```bash
+    python team_performance.py --league "Premier League" --team "Everton" --country "England"
+    ```
+The arguments:
+* league: The league name (e.g., "Premier League") (Required)
+* team: The team name (e.g., "Everton") (Required)
+* country: The country the team is from (e.g., "England") (Optional)
+
+### Example Output
+```bash
+Everton is 10 in the Premier League
+10 fixtures played in the Premier League by Everton
+
+Win percentage is: 50.0 
+Avg goals scored are: 1.5 
+Average conceded goals are: 1.2 
+Recent form index is 2.8
+```
