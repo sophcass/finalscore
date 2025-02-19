@@ -7,10 +7,15 @@ from get_football_data import (
     get_team_highest_ranked_league_id,
     get_team_highest_ranked_league_name,
     get_team_id,
+    get_team_standings,
     get_team_stats,
 )
 
 NUM_FIXTURES_THRESHOLD = 5
+
+
+def get_position_in_league(standings: dict) -> int:
+    return standings["rank"]
 
 
 def get_num_fixtures_played(stats: dict) -> int:
@@ -120,6 +125,11 @@ if __name__ == "__main__":
 
     league_id = get_league_id(league_name=league_name)
     team_id = get_team_id(team_name=team_name, country=country)
+
+    standings = get_team_standings(league_id=league_id, team_id=team_id)
+    position_in_league = get_position_in_league(standings=standings)
+
+    print(f"{team_name} is {position_in_league} in the {league_name}")
 
     team_stats = get_valid_team_stats(league_id=league_id, team_id=team_id)
     match_stats = get_match_stats(league_id=league_id, team_id=team_id)

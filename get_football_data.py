@@ -146,6 +146,18 @@ def get_team_id(team_name: str, country: Optional[str]) -> int:
     return team_id
 
 
+def get_team_standings(league_id: int, team_id: int) -> dict:
+    base_url = "https://api-football-v1.p.rapidapi.com/v3/standings"
+
+    query_params = {"league": league_id, "season": "2024", "team": team_id}
+    path = f"{base_url}?{urlencode(query_params)}"
+    data = get_data_from_rapidapi(path=path)
+
+    standings = data.get("response", [])[0]["league"]["standings"][0][0]
+
+    return standings
+
+
 def get_team_stats(league_id: int, team_id: int) -> dict:
     base_url = "https://api-football-v1.p.rapidapi.com/v3/teams/statistics"
 
