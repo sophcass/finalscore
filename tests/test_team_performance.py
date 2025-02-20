@@ -1,12 +1,53 @@
+from unittest import mock
+
 import pytest
 
+from get_football_data import get_team_standings
 from team_performance import (
     get_average_goals_conceded,
     get_average_goals_scored,
     get_num_fixtures_played,
+    get_rankings_in_league,
     get_recent_form_index,
     get_win_percentage,
 )
+
+
+@mock.patch("get_football_data.get_data_from_rapidapi")
+def test_get_team_standings(mock_get_data_from_rapidapi, standings_by_league_id_data):
+    # Arrange
+    mock_get_data_from_rapidapi.return_value = standings_by_league_id_data
+    league_id = 39
+    team_standings = get_team_standings(league_id=league_id)
+
+    expected_rankings_in_league = {
+        40: 1,
+        42: 2,
+        65: 3,
+        50: 4,
+        35: 5,
+        49: 6,
+        34: 7,
+        36: 8,
+        66: 9,
+        51: 10,
+        55: 11,
+        47: 12,
+        52: 13,
+        45: 14,
+        33: 15,
+        48: 16,
+        39: 17,
+        57: 18,
+        46: 19,
+        41: 20,
+    }
+
+    # Act
+    rankings_in_league = get_rankings_in_league(standings=team_standings)
+
+    # Assert
+    assert rankings_in_league == expected_rankings_in_league
 
 
 def test_get_num_fixtures_played(team_stats):

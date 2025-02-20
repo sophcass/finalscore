@@ -14,8 +14,13 @@ from get_football_data import (
 NUM_FIXTURES_THRESHOLD = 5
 
 
-def get_position_in_league(standings: dict) -> int:
-    return standings["rank"]
+def get_rankings_in_league(standings: list[dict]) -> dict:
+    rankings_in_league = dict()
+    for standing in standings:
+        team_id = standing["team"]["id"]
+        rankings_in_league[team_id] = standing["rank"]
+
+    return rankings_in_league
 
 
 def get_num_fixtures_played(stats: dict) -> int:
@@ -46,7 +51,10 @@ def get_average_goals_conceded(stats: dict) -> int:
     return avg_goals_conceded
 
 
-def get_recent_form_index(match_stats: list[dict], team_id: int) -> float:
+def get_recent_form_index(
+    match_stats: list[dict],
+    team_id: int,
+) -> float:
     today = datetime.now().date()
     match_results = []
     weights = [5, 4, 3, 2, 1]
@@ -126,10 +134,11 @@ if __name__ == "__main__":
     league_id = get_league_id(league_name=league_name)
     team_id = get_team_id(team_name=team_name, country=country)
 
-    standings = get_team_standings(league_id=league_id, team_id=team_id)
-    position_in_league = get_position_in_league(standings=standings)
+    standings = get_team_standings(league_id=league_id)
+    rankings_in_league = get_rankings_in_league(standings=standings)
 
-    print(f"{team_name} is {position_in_league} in the {league_name}")
+    team_rank_in_league = rankings_in_league.get(team_id)
+    print(f"{team_name} is {team_rank_in_league} in the {league_name}")
 
     team_stats = get_valid_team_stats(league_id=league_id, team_id=team_id)
     match_stats = get_match_stats(league_id=league_id, team_id=team_id)

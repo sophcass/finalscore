@@ -1196,3 +1196,168 @@ def leagues_data():
             },
         ],
     }
+
+
+@pytest.fixture
+def standings_by_league_id_data():
+    return {
+        "get": "standings",
+        "parameters": {"league": "39", "season": "2024"},
+        "errors": [],
+        "results": 1,
+        "paging": {"current": 1, "total": 1},
+        "response": [
+            {
+                "league": {
+                    "id": 39,
+                    "name": "Premier League",
+                    "country": "England",
+                    "season": 2024,
+                    "standings": [
+                        [
+                            {
+                                "rank": 1,
+                                "team": {
+                                    "id": 40,
+                                    "name": "Liverpool",
+                                },
+                            },
+                            {
+                                "rank": 2,
+                                "team": {
+                                    "id": 42,
+                                    "name": "Arsenal",
+                                },
+                            },
+                            {
+                                "rank": 3,
+                                "team": {
+                                    "id": 65,
+                                    "name": "Nottingham Forest",
+                                },
+                            },
+                            {
+                                "rank": 4,
+                                "team": {
+                                    "id": 50,
+                                    "name": "Manchester City",
+                                },
+                            },
+                            {
+                                "rank": 5,
+                                "team": {
+                                    "id": 35,
+                                    "name": "Bournemouth",
+                                },
+                            },
+                            {
+                                "rank": 6,
+                                "team": {
+                                    "id": 49,
+                                    "name": "Chelsea",
+                                },
+                            },
+                            {
+                                "rank": 7,
+                                "team": {
+                                    "id": 34,
+                                    "name": "Newcastle",
+                                },
+                            },
+                            {
+                                "rank": 8,
+                                "team": {
+                                    "id": 36,
+                                    "name": "Fulham",
+                                },
+                            },
+                            {
+                                "rank": 9,
+                                "team": {
+                                    "id": 66,
+                                    "name": "Aston Villa",
+                                },
+                            },
+                            {
+                                "rank": 10,
+                                "team": {
+                                    "id": 51,
+                                    "name": "Brighton",
+                                },
+                            },
+                            {
+                                "rank": 11,
+                                "team": {
+                                    "id": 55,
+                                    "name": "Brentford",
+                                },
+                            },
+                            {
+                                "rank": 12,
+                                "team": {
+                                    "id": 47,
+                                    "name": "Tottenham",
+                                },
+                            },
+                            {
+                                "rank": 13,
+                                "team": {
+                                    "id": 52,
+                                    "name": "Crystal Palace",
+                                },
+                            },
+                            {
+                                "rank": 14,
+                                "team": {
+                                    "id": 45,
+                                    "name": "Everton",
+                                },
+                            },
+                            {
+                                "rank": 15,
+                                "team": {
+                                    "id": 33,
+                                    "name": "Manchester United",
+                                },
+                            },
+                            {
+                                "rank": 16,
+                                "team": {
+                                    "id": 48,
+                                    "name": "West Ham",
+                                },
+                            },
+                            {
+                                "rank": 17,
+                                "team": {
+                                    "id": 39,
+                                    "name": "Wolves",
+                                },
+                            },
+                            {
+                                "rank": 18,
+                                "team": {
+                                    "id": 57,
+                                    "name": "Ipswich",
+                                },
+                            },
+                            {
+                                "rank": 19,
+                                "team": {
+                                    "id": 46,
+                                    "name": "Leicester",
+                                },
+                            },
+                            {
+                                "rank": 20,
+                                "team": {
+                                    "id": 41,
+                                    "name": "Southampton",
+                                },
+                            },
+                        ]
+                    ],
+                }
+            }
+        ],
+    }
