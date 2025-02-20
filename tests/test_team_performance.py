@@ -85,9 +85,9 @@ def test_get_average_goals_conceded(team_stats):
 @pytest.mark.parametrize(
     "num_fixtures_available, expected_recent_form_index",
     [
-        (5, 1.8),
-        (4, 2.2),
-        (3, 1.6666666666666667),
+        (5, 2.0766666666666667),
+        (4, 2.4650000000000003),
+        (3, 2.0083333333333333),
     ],
 )
 def test_get_recent_form_index(
@@ -96,9 +96,33 @@ def test_get_recent_form_index(
     # Arrange
     team_id = 45
     match_stats = match_stats[:num_fixtures_available]
+    rankings_in_league = {
+        40: 1,
+        42: 2,
+        65: 3,
+        50: 4,
+        35: 5,
+        49: 6,
+        34: 7,
+        36: 8,
+        66: 9,
+        51: 10,
+        55: 11,
+        47: 12,
+        52: 13,
+        45: 14,
+        33: 15,
+        48: 16,
+        39: 17,
+        57: 18,
+        46: 19,
+        41: 20,
+    }
 
     # Act
-    recent_form_index = get_recent_form_index(match_stats=match_stats, team_id=team_id)
+    recent_form_index = get_recent_form_index(
+        match_stats=match_stats, team_id=team_id, rankings_in_league=rankings_in_league
+    )
 
     # Assert
     assert recent_form_index == expected_recent_form_index

@@ -54,9 +54,11 @@ def get_average_goals_conceded(stats: dict) -> int:
 def get_recent_form_index(
     match_stats: list[dict],
     team_id: int,
+    rankings_in_league: dict,
 ) -> float:
     today = datetime.now().date()
     match_results = []
+    num_teams_in_league = len(rankings_in_league)
     weights = [5, 4, 3, 2, 1]
 
     for fixture in match_stats[::-1]:
@@ -75,12 +77,24 @@ def get_recent_form_index(
         if home_goals_scored is None or away_goals_scored is None:
             continue  # Match was postponed
 
+        opponent_id = away_team_id if home_team_id == team_id else home_team_id
+        opponent_rank = rankings_in_league.get(
+            opponent_id, num_teams_in_league
+        )  # Default to last place if unknown
+
         if home_goals_scored == away_goals_scored:
-            match_results.append(1)  # Draw
+            match_result = 1  # Draw
         elif home_goals_scored > away_goals_scored:
-            match_results.append(3 if home_team_id == team_id else 0)
+            match_result = 3 if home_team_id == team_id else 0
         else:
-            match_results.append(3 if away_team_id == team_id else 0)
+            match_result = 3 if away_team_id == team_id else 0
+
+        difficulty_multiplier = 1 + (num_teams_in_league - opponent_rank) / (
+            2 * num_teams_in_league
+        )
+        adjusted_result = match_result * difficulty_multiplier
+
+        match_results.append(adjusted_result)
 
         if len(match_results) >= 5:
             break
@@ -151,7 +165,9 @@ if __name__ == "__main__":
     win_percentage = get_win_percentage(stats=team_stats)
     avg_goals_scored = get_average_goals_scored(stats=team_stats)
     avg_goals_conceded = get_average_goals_conceded(stats=team_stats)
-    recent_form_index = get_recent_form_index(match_stats=match_stats, team_id=team_id)
+    recent_form_index = get_recent_form_index(
+        match_stats=match_stats, team_id=team_id, rankings_in_league=rankings_in_league
+    )
 
     print(
         f"Win percentage is: {win_percentage} \n"
