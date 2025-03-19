@@ -4,7 +4,7 @@ import os
 from typing import Any, Optional
 from urllib.parse import urlencode
 
-from diskcache import Cache
+from diskcache import Cache  # type: ignore[import-untyped]
 
 cache = Cache("local")
 
