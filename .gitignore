@@ -1,0 +1,8 @@
+# Byte-compiled / temporary files
+__pycache__/
+
+# Caches
+cache.db*
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
