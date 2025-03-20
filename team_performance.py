@@ -145,7 +145,7 @@ if __name__ == "__main__":
     team_name = args.team
     country = args.country
 
-    league_id = get_league_id(league_name=league_name)
+    league_id = get_league_id(league_name=league_name, country=country)
     team_id = get_team_id(team_name=team_name, country=country)
 
     standings = get_team_standings(league_id=league_id)

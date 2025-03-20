@@ -101,10 +101,12 @@ def get_team_highest_ranked_league_name(team_id: int) -> str:
     return league_name
 
 
-def get_league_id(league_name: str) -> int:
+def get_league_id(league_name: str, country: Optional[str]) -> int:
     base_url = "https://api-football-v1.p.rapidapi.com/v3/leagues"
 
-    query_params = {"name": league_name, "code": "GB-ENG"}
+    query_params = {"name": league_name}
+    if country:
+        query_params["country"] = country
     path = f"{base_url}?{urlencode(query_params)}"
     data = get_data_from_rapidapi(path=path)
 
